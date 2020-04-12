@@ -69,7 +69,7 @@ namespace Mrasm
 					string compile_error;
 					if (!match.CheckSyntaxMatch(line, out control_word, out compile_error))
 					{
-						write_compile_error(compile_error, line, i, input.Target);
+						write_compile_error(compile_error, line, i+1, input.Target);
 						return (int)ErrorCode.Compiler;
 					}
 					output.Add(control_word.PadLeft(8, '0'));
