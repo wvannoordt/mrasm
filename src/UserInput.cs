@@ -93,30 +93,37 @@ namespace Mrasm
 					{
 						vval = spt[1];
 					}
+					if (!IsValidPreprocessorName(vname, out error)) return false;
 
-					foreach (char t in vname)
-					{
-						if (!CompilationContext.PREPROCESS_PERMISSIBLE.Contains(t))
-						{
-							error = "forbidden character value in preprocessor definition \"" + vname + "\"";
-							return false;
-						}
-					}
-
-					foreach (char t in CompilationContext.PREPROCESS_START_FORBIDDEN)
-					{
-						if (vname.StartsWith(t))
-						{
-							error = "invalid starting character in preprocessor definition \"" + vname + "\"";
-							return false;
-						}
-					}
 					found_defs.Add(vname);
 					found_vals.Add(vval);
 				}
 			}
 			given_defs = found_defs.ToArray();
 			given_vals = found_vals.ToArray();
+			return true;
+		}
+
+		public static bool IsValidPreprocessorName(string vname, out string error)
+		{
+			error = "none";
+			foreach (char t in vname)
+			{
+				if (!CompilationContext.PREPROCESS_PERMISSIBLE.Contains(char.ToLower(t)))
+				{
+					error = "forbidden character value in preprocessor variable \"" + vname + "\"";
+					return false;
+				}
+			}
+
+			foreach (char t in CompilationContext.PREPROCESS_START_FORBIDDEN)
+			{
+				if (vname.StartsWith(t))
+				{
+					error = "invalid starting character in preprocessor variable \"" + vname + "\"";
+					return false;
+				}
+			}
 			return true;
 		}
 
@@ -133,7 +140,7 @@ namespace Mrasm
 					}
 					else
 					{
-						error = "unkown junk input \"" + args[i] + "\"";
+						error = "unknown junk input \"" + args[i] + "\"";
 						return false;
 					}
 				}

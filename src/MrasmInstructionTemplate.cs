@@ -16,6 +16,8 @@ namespace Mrasm
 		const string WHITES = " \t";
 		const char CONSTDATAPASS = '<';
 		private bool accepts_input_data;
+		private EnvironmentDefinitions environment_defs;
+		public EnvironmentDefinitions EnvDefs {set{environment_defs = value;}}
 		public MrasmInstructionTemplate(string template_line)
 		{
 			string[] line_array = template_line.Split(',');
@@ -60,9 +62,17 @@ namespace Mrasm
 					specific_error = "command \"" + name + "\" does not accept data input";
 				}
 				int passeddata;
-				if (!parse_environment_const_int(passed_constdata, out passeddata))
+				try
 				{
-					specific_error = "could not evaluate data expression to const int";
+					if (!parse_environment_const_int(passed_constdata, out passeddata))
+					{
+						specific_error = "could not evaluate data expression to const int";
+						return false;
+					}
+				}
+				catch (RecursionLimitException e)
+				{
+					specific_error = e.Message;
 					return false;
 				}
 				control_word = modify_control_word_with_passed_data(control_word, passeddata);
@@ -125,7 +135,15 @@ namespace Mrasm
 
 		private bool parse_environment_const_int(string input, out int input_integer)
 		{
-			return int.TryParse(input, out input_integer);
+			if (int.TryParse(input, out input_integer)) return true;
+			string resolved_symbol;
+			if (environment_defs.TryResolveSymbol(input, out resolved_symbol))
+			{
+				Console.WriteLine("symbol " + input + " resolved to " + resolved_symbol);
+				if (int.TryParse(resolved_symbol, out input_integer)) return true;
+			}
+			input_integer = -213123;
+			return false;
 		}
 
 		private bool parse_arg_syntax(string input, out string error, out string argument_string)
