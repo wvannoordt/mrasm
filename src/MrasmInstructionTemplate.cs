@@ -139,7 +139,6 @@ namespace Mrasm
 			string resolved_symbol;
 			if (environment_defs.TryResolveSymbol(input, out resolved_symbol))
 			{
-				Console.WriteLine("symbol " + input + " resolved to " + resolved_symbol);
 				if (int.TryParse(resolved_symbol, out input_integer)) return true;
 			}
 			input_integer = -213123;

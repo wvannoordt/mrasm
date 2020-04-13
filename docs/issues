@@ -1,0 +1,1 @@
+[ ] -Dmynum=3 (for example) does not evaluate to env. def.
