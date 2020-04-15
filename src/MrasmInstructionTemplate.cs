@@ -87,8 +87,8 @@ namespace Mrasm
 			if (line.Contains("]")) start_pos = line.LastIndexOf("]")+1;
 			for (int i = start_pos; i < line.Length; i++) afterstr += line[i];
 			afterstr = remove_whites(afterstr);
-			if (!accepts_input_data) return afterstr.Length == 0;
-			else return line.Contains(CONSTDATAPASS);
+			if (!accepts_input_data || !line.Contains(CONSTDATAPASS)) return afterstr.Length == 0;
+			return true;
 		}
 
 		private string modify_control_word_with_passed_data(string control_word, int passeddata)
